@@ -2,6 +2,7 @@
 using AJAXv1.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -30,13 +31,44 @@ namespace AJAXv1.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        public bool IsExist(string name)
+        {
+            var check = myContext.Provinces.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            if (check != null)
+                return true;
+            return false;
+        }
+
         public JsonResult Post(Province province)
         {
-            myContext.Provinces.Add(province);
-            var result = myContext.SaveChanges();
-            if (result > 0)
-                return Json(200, JsonRequestBehavior.AllowGet);
+            var check = IsExist(province.Name);
+            if (!check)
+            {
+                myContext.Provinces.Add(province);
+                var result = myContext.SaveChanges();
+                if (result > 0)
+                    return Json(200, JsonRequestBehavior.AllowGet);
+            }
             return Json(400, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Put(int id, Province province)
+        {
+            var get = myContext.Provinces.Find(id);
+            if(get != null)
+            {
+                var check = IsExist(province.Name);
+                if (!check)
+                {
+                    get.Name = province.Name;
+                    myContext.Entry(get).State = EntityState.Modified;
+                    var result = myContext.SaveChanges();
+                    if (result > 0)
+                        return Json(200, JsonRequestBehavior.AllowGet);
+                }
+                return Json(400, JsonRequestBehavior.AllowGet);
+            }
+            return Json(404, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult Delete(int id)

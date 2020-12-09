@@ -13,6 +13,20 @@ namespace AJAXv1
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            //routes.MapRoute(
+            //    name: "Admin",
+            //    url: "admin/{controller}",
+            //    defaults: new { action = "Index" }
+            //);
+
+            //routes.MapRoute(
+            //    name: "Client",
+            //    url: "client/",
+            //    defaults: new { controller = "Dashboard", action = "Index" }
+            //);
+
+            routes.MapMvcAttributeRoutes();
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
